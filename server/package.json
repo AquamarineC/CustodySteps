@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "start": "node src/index.js",
-    "smoke": "node scripts/smoke-flow.js"
+    "start": "node start.cjs",
+    "smoke": "node scripts/smoke-flow.js",
+    "start:esm": "node src/index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
