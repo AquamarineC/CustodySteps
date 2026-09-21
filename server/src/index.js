@@ -17,10 +17,6 @@ const hasStripe =
   Boolean(process.env.STRIPE_SECRET_KEY) && Boolean(process.env.STRIPE_PRICE_ID);
 
 let stripe = null;
-if (hasStripe) {
-  const Stripe = (await import('stripe')).default;
-  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-}
 
 const app = express();
 
@@ -337,9 +333,20 @@ app.get('*', (req, res, next) => {
   });
 });
 
-await getDb();
-app.listen(PORT, () => {
-  console.log(`CustodySteps API on http://localhost:${PORT}`);
-  console.log(`Stripe: ${hasStripe ? 'configured' : 'mock upgrade mode'}`);
-  console.log(`DB impl: ${getDbImpl()}`);
+async function main() {
+  if (hasStripe) {
+    const Stripe = (await import('stripe')).default;
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  await getDb();
+  app.listen(PORT, () => {
+    console.log(`CustodySteps API on http://localhost:${PORT}`);
+    console.log(`Stripe: ${hasStripe ? 'configured' : 'mock upgrade mode'}`);
+    console.log(`DB impl: ${getDbImpl()}`);
+  });
+}
+
+main().catch((err) => {
+  console.error('CustodySteps failed to start:', err);
+  process.exit(1);
 });
